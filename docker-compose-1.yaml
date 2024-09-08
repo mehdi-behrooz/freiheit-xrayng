@@ -1,0 +1,44 @@
+services:
+  xray:
+    image: ghcr.io/mehdi-behrooz/freiheit-xray:latest
+    container_name: xray
+    ports:
+      - 443:80
+    environment:
+      - PROTOCOL=tcp
+      - USER_ID_DIRECT=facade00-0000-4000-a000-000000000000
+      - USER_ID_WARP=decade00-0000-4000-a000-000000000000
+      - WARP_ADDRESS=warp
+      - GENERATE_DIRECT_CONFIGS=true
+      - GENERATE_TUNNEL_CONFIGS=true
+      - GENERATE_WARP_CONFIGS=true
+      - TUNNEL_IP=192.168.1.1
+
+  warp:
+    image: ghcr.io/mehdi-behrooz/freiheit-warp:latest
+    container_name: warp
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - WARP_PRIVATE_KEY=${WARP_PRIVATE_KEY}
+
+  xrayng-test-connection:
+    build: .
+    container_name: xrayng-test-connection
+    depends_on:
+      - xray
+    environment:
+      - SUBSCRIPTION_URL=http://xray:81/
+      - ASSERT_COUNT=4
+      - INDEX_TO_CHECK=1, 2
+      - PERIOD_IN_MINUTES=1
+
+  debugger:
+    image: ghcr.io/mehdi-behrooz/docker-debugger:latest
+    container_name: debugger
+    stdin_open: true
+    tty: true
+
+networks:
+  default:
+    enable_ipv6: true

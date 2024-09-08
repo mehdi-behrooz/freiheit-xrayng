@@ -1,0 +1,68 @@
+services:
+  xray1:
+    image: ghcr.io/mehdi-behrooz/freiheit-xray:latest
+    container_name: xray1
+    environment:
+      - PROTOCOL=tcp
+      - USER_ID_DIRECT=facade00-0000-4000-a000-000000000000
+      - USER_ID_WARP=decade00-0000-4000-a000-000000000000
+      - GENERATE_DIRECT_CONFIGS=true
+      - GENERATE_TUNNEL_CONFIGS=false
+      - GENERATE_WARP_CONFIGS=false
+
+  xray2:
+    image: ghcr.io/mehdi-behrooz/freiheit-xray:latest
+    container_name: xray2
+    environment:
+      - PROTOCOL=ws
+      - USER_ID_DIRECT=facade00-0000-4000-a000-000000000000
+      - USER_ID_WARP=decade00-0000-4000-a000-000000000000
+      - WS_HOST=example.com
+      - WS_PATH=/my/path
+      - GENERATE_DIRECT_CONFIGS=true
+      - GENERATE_WORKER_CONFIGS=true
+      - GENERATE_WARP_CONFIGS=true
+      - CLOUDFLARE_IP=www.speedtest.net
+      - WORKER_SNI=user.cloudflare.dev
+
+  warp:
+    image: ghcr.io/mehdi-behrooz/freiheit-warp:latest
+    container_name: warp
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - WARP_PRIVATE_KEY=${WARP_PRIVATE_KEY}
+
+  katalog:
+    image: ghcr.io/mehdi-behrooz/freiheit-katalog:latest
+    container_name: katalog
+    depends_on:
+      - xray1
+      - xray2
+    environment:
+      - ENCODE_CONFIG=true
+      - CONFIG_PATH=/a/b/c/d
+      - LABEL=TEST
+      - XRAY_SERVERS=xray1, xray2
+
+  xrayng-check-counts:
+    build: .
+    container_name: xrayng-check-counts
+    depends_on:
+      - katalog
+    environment:
+      - SUBSCRIPTION_URL=http://katalog:80/a/b/c/d/
+      - INDEX_TO_CHECK=
+      - ASSERT_COUNT=5
+      - PERIOD_IN_MINUTES=1
+
+  debugger:
+    image: ghcr.io/mehdi-behrooz/docker-debugger:latest
+    container_name: debugger
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+networks:
+  default:
+    enable_ipv6: true
