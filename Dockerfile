@@ -5,8 +5,9 @@ FROM golang:1.23 AS golang
 FROM alpine:3
 
 # libcap for: setcap
+# coreutils for: base64
 RUN apk update && \
-    apk add bash curl git libcap supervisor
+    apk add bash curl git libcap supervisor coreutils
 
 RUN addgroup --system xray && \
     adduser --system --disabled-password xray --ingroup xray
