@@ -25,11 +25,11 @@ fi
 
 fetch="$(/usr/bin/fetch.sh)" || exit 1
 readarray -t subs <<<"$fetch"
+count="${#subs[@]}"
 
 error=0
 
 if [[ -n "$ASSERT_COUNT" ]]; then
-    count="${#subs[@]}"
     if [[ "$count" -eq "$ASSERT_COUNT" ]]; then
         echo "$count subs exists. OK."
     else
@@ -37,10 +37,11 @@ if [[ -n "$ASSERT_COUNT" ]]; then
         error=1
     fi
 fi
-if [[ -n "$INDEX_TO_CHECK" ]]; then
-    IFS=', ' read -r -a indexes <<<"$INDEX_TO_CHECK"
-    for index in "${indexes[@]}"; do
-        test_sub "${subs[$((index - 1))]}" || error=1
-    done
+if [[ "$INDEX_TO_CHECK" == "*" ]]; then
+    INDEX_TO_CHECK="$(seq -s, 1 "$count")"
 fi
+IFS=', ' read -r -a indexes <<<"$INDEX_TO_CHECK"
+for index in "${indexes[@]}"; do
+    test_sub "${subs[$((index - 1))]}" || error=1
+done
 exit "$error"
