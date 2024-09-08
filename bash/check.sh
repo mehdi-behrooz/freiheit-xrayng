@@ -38,7 +38,7 @@ if [[ -n "$ASSERT_COUNT" ]]; then
     fi
 fi
 if [[ -n "$INDEX_TO_CHECK" ]]; then
-    IFS=', ' read -r -a indexes <<< "$INDEX_TO_CHECK"
+    IFS=', ' read -r -a indexes <<<"$INDEX_TO_CHECK"
     for index in "${indexes[@]}"; do
         test_sub "${subs[$((index - 1))]}" || error=1
     done
