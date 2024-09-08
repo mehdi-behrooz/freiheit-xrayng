@@ -41,7 +41,7 @@ if [[ -z "$INDEX_TO_CHECK" ]]; then
     echo "No index has been chosen for test. Skipping."
     exit $error
 fi
-if [[ "$INDEX_TO_CHECK" == "*" ]]; then
+if [[ "$INDEX_TO_CHECK" == "all" ]]; then
     INDEX_TO_CHECK="$(seq -s, 1 "$count")"
 fi
 if [[ ! "$INDEX_TO_CHECK" =~ ^[0-9,]+$ ]]; then
