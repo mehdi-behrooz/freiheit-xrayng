@@ -44,7 +44,7 @@ fi
 if [[ "$INDEX_TO_CHECK" == "all" ]]; then
     INDEX_TO_CHECK="$(seq -s, 1 "$count")"
 fi
-if [[ ! "$INDEX_TO_CHECK" =~ ^[0-9,]+$ ]]; then
+if [[ ! "$INDEX_TO_CHECK" =~ ^[0-9,\ ]+$ ]]; then
     echo "ERROR: invalid index list format: $INDEX_TO_CHECK"
     exit 1
 fi
