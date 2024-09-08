@@ -1,0 +1,4 @@
+SHELL=/bin/sh
+* * * * * echo "hello console" >/proc/1/fd/1 2>/proc/1/fd/2
+* * * * * whoami >/proc/1/fd/1 2>/proc/1/fd/2
+* * * * * echo $SUBSCRIPTION_URL >/proc/1/fd/1 2>/proc/1/fd/2
