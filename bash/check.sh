@@ -37,8 +37,16 @@ if [[ -n "$ASSERT_COUNT" ]]; then
         error=1
     fi
 fi
+if [[ -z "$INDEX_TO_CHECK" ]]; then
+    echo "No index has been chosen for test. Skipping."
+    exit $error
+fi
 if [[ "$INDEX_TO_CHECK" == "*" ]]; then
     INDEX_TO_CHECK="$(seq -s, 1 "$count")"
+fi
+if [[ ! "$INDEX_TO_CHECK" =~ ^[0-9,]+$ ]]; then
+    echo "ERROR: invalid index list format: $INDEX_TO_CHECK"
+    exit 1
 fi
 IFS=', ' read -r -a indexes <<<"$INDEX_TO_CHECK"
 for index in "${indexes[@]}"; do
