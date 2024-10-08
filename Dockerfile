@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM teddysun/xray:1.8.24 AS xray
+FROM teddysun/xray:24.9.30 AS xray
 FROM golang:1.23 AS golang
 FROM alpine:3
 
